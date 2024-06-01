@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.text.DecimalFormat;
 
 public class display extends JFrame {
@@ -60,27 +61,27 @@ public class display extends JFrame {
         String[] sequenceColumns = {"序列号", "页码"};
         Object[][] sequenceData = new Object[400][2];
         sequenceTable = new JTable(sequenceData, sequenceColumns);
-        sequenceTable.setDefaultRenderer(Object.class, new CombinedTableCellRenderer()); // 设置为默认渲染器
+        sequenceTable.setDefaultRenderer(Object.class, new renderer());
         mainPanel.add(new JScrollPane(sequenceTable), BorderLayout.WEST);
 
         // 命中率表
         String[] hitRateColumns = {"页框数", "Opt算法", "FIFO算法", "LRU算法"};
         Object[][] hitRateData = new Object[37][4]; // 40行4列
         hitRateTable = new JTable(hitRateData, hitRateColumns);
-        hitRateTable.setDefaultRenderer(Object.class, new CombinedTableCellRenderer()); // 设置为默认渲染器
-        hitRateTable.getColumnModel().getColumn(1).setCellRenderer(new CombinedTableCellRenderer());
-        hitRateTable.getColumnModel().getColumn(2).setCellRenderer(new CombinedTableCellRenderer());
-        hitRateTable.getColumnModel().getColumn(3).setCellRenderer(new CombinedTableCellRenderer());
-        hitRateTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        hitRateTable.setDefaultRenderer(Object.class, new renderer());
+        hitRateTable.addMouseListener(new MouseAdapter() {
+            // 点击事件
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = hitRateTable.rowAtPoint(evt.getPoint());
                 int col = hitRateTable.columnAtPoint(evt.getPoint());
+
                 // 处理点击事件
-                System.out.println("点击了第" + (row + 1) + "行，第" + (col + 1) + "列");
+                if (col >= 1) { // 检查列索引是否在后三列内
+                    System.out.println("页框数："+(row+4)+"，算法："+col);
+                }
             }
         });
         mainPanel.add(new JScrollPane(hitRateTable), BorderLayout.SOUTH);
-
         add(mainPanel);
     }
 
@@ -113,7 +114,7 @@ public class display extends JFrame {
         }
     }
 
-    public class CombinedTableCellRenderer extends DefaultTableCellRenderer {
+    public static class renderer extends DefaultTableCellRenderer {
         private DecimalFormat format = new DecimalFormat("#0.0000"); // 设置数据显示格式
 
         @Override
@@ -131,13 +132,15 @@ public class display extends JFrame {
             if (value instanceof Double) {
                 setText(format.format((Double) value)); // 格式化Double类型的数据
             }
-
-            // 注意：如果value为null或其他非Double类型，setText()方法可能已被super方法调用，
-            // 因此不需要在这里再次调用setText()，除非你想覆盖默认行为。
-
             return this; // 返回当前实例（this）
         }
     }
+
+    @Override
+    public Cursor getCursor() {
+        return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
