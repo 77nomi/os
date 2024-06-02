@@ -21,10 +21,10 @@ import java.awt.event.MouseAdapter;
 import java.text.DecimalFormat;
 
 public class display extends JFrame {
-    private DefaultCategoryDataset dataset;
-    private JTable sequenceTable;
-    private JTable hitRateTable;
-    int[] pageSequence;
+    private final DefaultCategoryDataset dataset;
+    private final JTable sequenceTable;
+    private final JTable hitRateTable;
+    private int[] pageSequence;
     private boolean isClick = false;
 
     public display() {
@@ -139,25 +139,24 @@ public class display extends JFrame {
     // 生成新的随机地址序列并重新计算命中率
     private void newSequence() {
         isClick = true;
-
         // 生成随机地址序列
         pageSequence = main_operation.newPageSequence();
 
         // 计算不同算法在不同页框数下的命中率
-        for (int memorySize = 4; memorySize <= 40; memorySize++) {
-            double optHitRate = main_operation.getOPT(pageSequence,memorySize);
-            double fifoHitRate = main_operation.getFIFO(pageSequence,memorySize);
-            double lruHitRate = main_operation.getLRU(pageSequence,memorySize);
+        for (int pageFramesSize = 4; pageFramesSize <= 40; pageFramesSize++) {
+            double optHitRate = main_operation.getOPT(pageSequence,pageFramesSize);
+            double fifoHitRate = main_operation.getFIFO(pageSequence,pageFramesSize);
+            double lruHitRate = main_operation.getLRU(pageSequence,pageFramesSize);
 
             // 更新表格数据
-            hitRateTable.setValueAt(memorySize, memorySize - 4, 0);
-            hitRateTable.setValueAt(optHitRate, memorySize - 4, 1);
-            hitRateTable.setValueAt(fifoHitRate, memorySize - 4, 2);
-            hitRateTable.setValueAt(lruHitRate, memorySize - 4, 3);
+            hitRateTable.setValueAt(pageFramesSize, pageFramesSize - 4, 0);
+            hitRateTable.setValueAt(optHitRate, pageFramesSize - 4, 1);
+            hitRateTable.setValueAt(fifoHitRate, pageFramesSize - 4, 2);
+            hitRateTable.setValueAt(lruHitRate, pageFramesSize - 4, 3);
 
-            dataset.addValue(optHitRate, "OPT", String.valueOf(memorySize));
-            dataset.addValue(fifoHitRate, "FIFO", String.valueOf(memorySize));
-            dataset.addValue(lruHitRate, "LRU", String.valueOf(memorySize));
+            dataset.addValue(optHitRate, "OPT", String.valueOf(pageFramesSize));
+            dataset.addValue(fifoHitRate, "FIFO", String.valueOf(pageFramesSize));
+            dataset.addValue(lruHitRate, "LRU", String.valueOf(pageFramesSize));
         }
 
         // 更新随机地址序列表格数据

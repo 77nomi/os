@@ -30,27 +30,27 @@ public class main_operation {
 
 
     // 最佳置换算法(OPT)
-    public static double getOPT(int[] pageSequence, int memorySize) {
-        List<Integer> memory = new ArrayList<>(); // 页框
+    public static double getOPT(int[] pageSequence, int pageFramesSize) {
+        List<Integer> pageFrames = new ArrayList<>(); // 页框
         int pageFaults = 0; //缺页数
 
         for (int i = 0; i < 400; i++) {
             int page = pageSequence[i];
-            if (!memory.contains(page)) {  // 缺页
+            if (!pageFrames.contains(page)) {  // 缺页
                 pageFaults++;
-                if (memory.size() < memorySize) {  // 页框未满直接添加
-                    memory.add(page);
+                if (pageFrames.size() < pageFramesSize) {  // 页框未满直接添加
+                    pageFrames.add(page);
                 } else {
                     int farthestIndex = -1;
                     int farthestPage = -1;
-                    for (int j = 0; j < memory.size(); j++) {
-                        int nextPageIndex = findNextPageIndex(pageSequence, memory.get(j), i);
+                    for (int j = 0; j < pageFrames.size(); j++) {
+                        int nextPageIndex = findNextPageIndex(pageSequence, pageFrames.get(j), i);
                         if (nextPageIndex > farthestIndex) {
                             farthestIndex = nextPageIndex;
                             farthestPage = j;
                         }
                     }
-                    memory.set(farthestPage, page);
+                    pageFrames.set(farthestPage, page);
                 }
             }
         }
@@ -62,17 +62,17 @@ public class main_operation {
     }
 
     // 先进先出(FIFO)
-    public static double getFIFO(int[] pageSequence, int memorySize) {
-        Queue<Integer> memory = new LinkedList<>(); // 页框，用队列存储
+    public static double getFIFO(int[] pageSequence, int pageFramesSize) {
+        Queue<Integer> pageFrames = new LinkedList<>(); // 页框，用队列存储
         int pageFaults = 0; //缺页数
 
         for (int page : pageSequence) {
-            if (!memory.contains(page)) {  // 缺页
-                if (memory.size() < memorySize) {  // 页框未满直接添加
-                    memory.add(page);
+            if (!pageFrames.contains(page)) {  // 缺页
+                if (pageFrames.size() < pageFramesSize) {  // 页框未满直接添加
+                    pageFrames.add(page);
                 } else {
-                    memory.poll();
-                    memory.add(page);
+                    pageFrames.poll();
+                    pageFrames.add(page);
                 }
                 pageFaults++;
             }
@@ -85,26 +85,26 @@ public class main_operation {
     }
 
     // LRU算法
-    public static double getLRU(int[] pageSequence, int memorySize) {
-        List<Integer> memory = new ArrayList<>(); // 页框
+    public static double getLRU(int[] pageSequence, int pageFramesSize) {
+        List<Integer> pageFrames = new ArrayList<>(); // 页框
         int pageFaults = 0; //缺页数
 
         for (int i = 0; i < 400; i++) {
             int page = pageSequence[i];
-            if (!memory.contains(page)) {  // 缺页
-                if (memory.size() < memorySize) {  // 页框未满直接添加
-                    memory.add(page);
+            if (!pageFrames.contains(page)) {  // 缺页
+                if (pageFrames.size() < pageFramesSize) {  // 页框未满直接添加
+                    pageFrames.add(page);
                 } else {
                     int leastRecentlyUsed = -1;
                     int leastRecentlyUsedIndex = Integer.MAX_VALUE;
-                    for (int j = 0; j < memory.size(); j++) {
-                        int index = findPreviousPageIndex(pageSequence, memory.get(j), i);
+                    for (int j = 0; j < pageFrames.size(); j++) {
+                        int index = findPreviousPageIndex(pageSequence, pageFrames.get(j), i);
                         if (index < leastRecentlyUsedIndex) {
                             leastRecentlyUsedIndex = index;
                             leastRecentlyUsed = j;
                         }
                     }
-                    memory.set(leastRecentlyUsed, page);
+                    pageFrames.set(leastRecentlyUsed, page);
                 }
                 pageFaults++;
             }

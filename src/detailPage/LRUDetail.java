@@ -6,11 +6,9 @@ import java.util.ArrayList;
 
 public class LRUDetail extends JFrame {
 
-    private JPanel mainPanel;
     private JTable mainTable;
-    private ArrayList<Integer> pageFrames;
-    private int[] pageSequence; // 假设这个数组在类的其他部分被初始化
-    private int pageFramesSize; // 假设这个变量在类的其他部分被初始化
+    private final int[] pageSequence;
+    private final int pageFramesSize;
 
     // 构造函数
     public LRUDetail(int[] pageSequence, int pageFramesSize) {
@@ -26,7 +24,7 @@ public class LRUDetail extends JFrame {
         setTitle("LRU算法模拟 22软工4班 陈芷炫");
         setSize(900, 700);
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         add(mainPanel);
 
@@ -71,13 +69,11 @@ public class LRUDetail extends JFrame {
 
     // 模拟
     private void getDatas() {
-        pageFrames = new ArrayList<>();
+        ArrayList<Integer> pageFrames = new ArrayList<>();
 
         for (int i = 0; i < 400; i++) {
-            boolean pageDefault = false;
             int page = pageSequence[i];
             if (!pageFrames.contains(page)) {  // 缺页
-                pageDefault = true;
                 if (pageFrames.size() < pageFramesSize) {  // 页框未满直接添加
                     pageFrames.add(page);
                 } else {
@@ -92,13 +88,11 @@ public class LRUDetail extends JFrame {
                     }
                     pageFrames.set(leastRecentlyUsed, page);
                 }
-            }
-            mainTable.setValueAt(page,i,0);
-            if(pageDefault){
                 mainTable.setValueAt("F",i,1);
             }
+            mainTable.setValueAt(page,i,0);
             for(int j =0;j<pageFramesSize;j++){
-                if(j>=pageFrames.size())
+                if(j>= pageFrames.size())
                     mainTable.setValueAt("NULL",i,j+2);
                 else if(pageFrames.get(j)==null)
                     mainTable.setValueAt("NULL",i,j+2);

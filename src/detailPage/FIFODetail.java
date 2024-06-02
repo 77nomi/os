@@ -2,17 +2,14 @@ package detailPage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class FIFODetail extends JFrame {
 
-    private JPanel mainPanel;
     private JTable mainTable;
-    private ArrayList<Integer> pageFrames;
-    private int[] pageSequence; // 假设这个数组在类的其他部分被初始化
-    private int pageFramesSize; // 假设这个变量在类的其他部分被初始化
+    private final int[] pageSequence;
+    private final int pageFramesSize;
 
     // 构造函数
     public FIFODetail(int[] pageSequence, int pageFramesSize) {
@@ -28,7 +25,7 @@ public class FIFODetail extends JFrame {
         setTitle("FIFO算法模拟 22软工4班 陈芷炫");
         setSize(900, 700);
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         add(mainPanel);
 
@@ -80,9 +77,7 @@ public class FIFODetail extends JFrame {
 
         for (int i = 0; i < pageSequence.length; i++) {
             int page = pageSequence[i];
-            boolean pageDefault = false;
             if (!pageFrames.contains(page)) {  // 缺页
-                pageDefault = true;
                 if (pageFrames.size() < pageFramesSize) {  // 页框未满直接添加
                     pageFrames.add(page);
                     memory[index++]=page;
@@ -92,13 +87,11 @@ public class FIFODetail extends JFrame {
                     if(index==pageFramesSize)
                         index = 0;
                     memory[index++]=page;
+                    mainTable.setValueAt("F",i,1);
                 }
             }
 
             mainTable.setValueAt(page,i,0);
-            if(pageDefault){
-                mainTable.setValueAt("F",i,1);
-            }
             int columnIndex = 2; // 列索引从2开始
             for(int j=0;j<pageFrames.size();j++){
                 mainTable.setValueAt(memory[j], i, j+2);
