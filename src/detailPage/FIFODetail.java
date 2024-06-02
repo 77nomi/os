@@ -31,7 +31,7 @@ public class FIFODetail extends JFrame {
 
 
         //当前序列号、缺页情况、pageFrame
-        String[] titleColumns = {"地址序列号", "缺页情况"};
+        String[] titleColumns = {"访问页", "缺页情况"};
         for (int i = 0; i < pageFramesSize; i++) {
             titleColumns = addElement(titleColumns, String.valueOf((i+1)));
         }
