@@ -89,18 +89,19 @@ public class main_operation {
         List<Integer> memory = new ArrayList<>(); // 页框
         int pageFaults = 0; //缺页数
 
-        for (int page : pageSequence) {
+        for (int i = 0; i < 400; i++) {
+            int page = pageSequence[i];
             if (!memory.contains(page)) {  // 缺页
                 if (memory.size() < memorySize) {  // 页框未满直接添加
                     memory.add(page);
                 } else {
                     int leastRecentlyUsed = -1;
                     int leastRecentlyUsedIndex = Integer.MAX_VALUE;
-                    for (int i = 0; i < memory.size(); i++) {
-                        int index = findPreviousPageIndex(pageSequence, page, i);
+                    for (int j = 0; j < memory.size(); j++) {
+                        int index = findPreviousPageIndex(pageSequence, memory.get(j), i);
                         if (index < leastRecentlyUsedIndex) {
                             leastRecentlyUsedIndex = index;
-                            leastRecentlyUsed = i;
+                            leastRecentlyUsed = j;
                         }
                     }
                     memory.set(leastRecentlyUsed, page);

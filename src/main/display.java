@@ -25,7 +25,7 @@ public class display extends JFrame {
     private boolean isClick = false;
 
     public display() {
-        setTitle("Page Replacement Algorithms");
+        setTitle("页面置换算法 22软工4班 陈芷炫");
         setSize(980, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -110,10 +110,11 @@ public class display extends JFrame {
                 // 处理点击事件
                 if(isClick){
                     if(col == 1){
-                        new OptDetail(pageSequence, (row+4));
-                    }
-                    if (col >= 1) { // 检查列索引是否在后三列内
-                        System.out.println("页框数："+(row+4)+"，算法："+col);
+                        new OPTDetail(pageSequence, (row+4));
+                    }else if(col ==2){
+                        new FIFODetail(pageSequence, (row+4));
+                    }else if(col == 3){
+                        new LRUDetail(pageSequence, (row+4));
                     }
                 }
             }
