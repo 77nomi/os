@@ -1,11 +1,10 @@
-package main;
+package detailPage;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class OPTDetail extends JFrame {
+public class LRUDetail extends JFrame {
 
     private JPanel mainPanel;
     private JTable mainTable;
@@ -14,7 +13,7 @@ public class OPTDetail extends JFrame {
     private int pageFramesSize; // 假设这个变量在类的其他部分被初始化
 
     // 构造函数
-    public OPTDetail(int[] pageSequence, int pageFramesSize) {
+    public LRUDetail(int[] pageSequence, int pageFramesSize) {
         this.pageSequence = pageSequence;
         this.pageFramesSize = pageFramesSize;
 
@@ -24,7 +23,7 @@ public class OPTDetail extends JFrame {
 
     // 初始化组件
     private void initComponents() {
-        setTitle("OPT算法模拟 22软工4班 陈芷炫");
+        setTitle("LRU算法模拟 22软工4班 陈芷炫");
         setSize(900, 700);
 
         mainPanel = new JPanel();
@@ -82,16 +81,16 @@ public class OPTDetail extends JFrame {
                 if (pageFrames.size() < pageFramesSize) {  // 页框未满直接添加
                     pageFrames.add(page);
                 } else {
-                    int farthestIndex = -1;
-                    int farthestPage = -1;
+                    int leastRecentlyUsed = -1;
+                    int leastRecentlyUsedIndex = Integer.MAX_VALUE;
                     for (int j = 0; j < pageFrames.size(); j++) {
-                        int nextPageIndex = findNextPageIndex(pageSequence, pageFrames.get(j), i);
-                        if (nextPageIndex > farthestIndex) {
-                            farthestIndex = nextPageIndex;
-                            farthestPage = j;
+                        int index = findPreviousPageIndex(pageSequence, pageFrames.get(j), i);
+                        if (index < leastRecentlyUsedIndex) {
+                            leastRecentlyUsedIndex = index;
+                            leastRecentlyUsed = j;
                         }
                     }
-                    pageFrames.set(farthestPage, page);
+                    pageFrames.set(leastRecentlyUsed, page);
                 }
             }
             mainTable.setValueAt(page,i,0);
@@ -110,47 +109,15 @@ public class OPTDetail extends JFrame {
 
     }
 
-    // 最佳置换算法——寻找当前内存页面在未来的访问序列中的下一个访问位置
-    private static int findNextPageIndex(int[] pageSequence, int page, int startIndex) {
-        for (int i = startIndex; i < pageSequence.length; i++) {
+
+    //LRU算法——寻找当前内存页面最近的一次使用时间
+    private static int findPreviousPageIndex(int[] pageSequence, int page, int startIndex) {
+        for (int i = startIndex - 1; i >= 0; i--) {
             if (pageSequence[i] == page) {
                 return i;
             }
         }
-        return Integer.MAX_VALUE;
-    }
-
-    class CustomRenderer extends DefaultTableCellRenderer {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-            if (column == 1) {
-                if ("F".equals(value)) {
-                    cellComponent.setForeground(Color.RED);
-                    cellComponent.setFont(cellComponent.getFont().deriveFont(Font.BOLD));
-                } else {
-                    // Reset font color and style
-                    cellComponent.setForeground(table.getForeground());
-                    cellComponent.setFont(table.getFont());
-                }
-            } else {
-                if(row==0 && column == 2){
-                    cellComponent.setForeground(Color.RED);
-                    cellComponent.setFont(cellComponent.getFont().deriveFont(Font.BOLD));
-                }
-                else if (row > 0 && !value.equals(table.getValueAt(row - 1, column))) {
-                    cellComponent.setForeground(Color.RED);
-                    cellComponent.setFont(cellComponent.getFont().deriveFont(Font.BOLD));
-                } else {
-                    cellComponent.setForeground(table.getForeground());
-                    cellComponent.setFont(table.getFont());
-                }
-            }
-
-            return cellComponent;
-        }
+        return Integer.MIN_VALUE;
     }
 
 }
