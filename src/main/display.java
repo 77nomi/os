@@ -21,6 +21,7 @@ public class display extends JFrame {
     private DefaultCategoryDataset dataset;
     private JTable sequenceTable;
     private JTable hitRateTable;
+    int[] pageSequence;
     private boolean isClick = false;
 
     public display() {
@@ -49,7 +50,7 @@ public class display extends JFrame {
         // 随机序列表
         // 创建一个大标题 JLabel
         JLabel sequenceTitle = new JLabel("随机序列表");
-        sequenceTitle.setFont(new Font("宋体", Font.BOLD, 24));
+        sequenceTitle.setFont(new Font("宋体", Font.BOLD, 20));
         sequenceTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
         String[] sequenceColumns = {"序列号", "页码"};
@@ -93,11 +94,11 @@ public class display extends JFrame {
         // 命中率表
         // 创建一个大标题 JLabel
         JLabel hitTitle = new JLabel("命中率表，点击表格可查看具体演示过程");
-        hitTitle.setFont(new Font("宋体", Font.BOLD, 24));
+        hitTitle.setFont(new Font("宋体", Font.BOLD, 20));
         hitTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
         String[] hitRateColumns = {"页框数", "Opt算法", "FIFO算法", "LRU算法"};
-        Object[][] hitRateData = new Object[37][4]; // 40行4列
+        Object[][] hitRateData = new Object[37][4];
         hitRateTable = new JTable(hitRateData, hitRateColumns);
         hitRateTable.setDefaultRenderer(Object.class, new renderer());
         hitRateTable.addMouseListener(new MouseAdapter() {
@@ -108,6 +109,9 @@ public class display extends JFrame {
 
                 // 处理点击事件
                 if(isClick){
+                    if(col == 1){
+                        new OptDetail(pageSequence, (row+4));
+                    }
                     if (col >= 1) { // 检查列索引是否在后三列内
                         System.out.println("页框数："+(row+4)+"，算法："+col);
                     }
@@ -123,7 +127,6 @@ public class display extends JFrame {
         hitPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         hitPanel.add(hitTitle, BorderLayout.NORTH);
         hitPanel.add(new JScrollPane(hitRateTable), BorderLayout.CENTER);
-
         mainPanel.add(hitPanel, BorderLayout.SOUTH);
 
         getContentPane().add(mainPanel);
@@ -134,7 +137,7 @@ public class display extends JFrame {
         isClick = true;
 
         // 生成随机地址序列
-        int[] pageSequence = main_operation.newPageSequence();
+        pageSequence = main_operation.newPageSequence();
 
         // 计算不同算法在不同页框数下的命中率
         for (int memorySize = 4; memorySize <= 40; memorySize++) {
@@ -181,12 +184,6 @@ public class display extends JFrame {
             return this; // 返回当前实例（this）
         }
     }
-
-    @Override
-    public Cursor getCursor() {
-        return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-    }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {

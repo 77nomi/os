@@ -34,23 +34,24 @@ public class main_operation {
         List<Integer> memory = new ArrayList<>(); // 页框
         int pageFaults = 0; //缺页数
 
-        for (int page : pageSequence) {
+        for (int i = 0; i < 400; i++) {
+            int page = pageSequence[i];
             if (!memory.contains(page)) {  // 缺页
+                pageFaults++;
                 if (memory.size() < memorySize) {  // 页框未满直接添加
                     memory.add(page);
                 } else {
                     int farthestIndex = -1;
                     int farthestPage = -1;
-                    for (int i = 0; i < memory.size(); i++) {
-                        int nextPageIndex = findNextPageIndex(pageSequence, page, i);
+                    for (int j = 0; j < memory.size(); j++) {
+                        int nextPageIndex = findNextPageIndex(pageSequence, memory.get(j), i);
                         if (nextPageIndex > farthestIndex) {
                             farthestIndex = nextPageIndex;
-                            farthestPage = i;
+                            farthestPage = j;
                         }
                     }
                     memory.set(farthestPage, page);
                 }
-                pageFaults++;
             }
         }
 
