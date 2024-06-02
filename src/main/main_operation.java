@@ -53,7 +53,11 @@ public class main_operation {
                 pageFaults++;
             }
         }
-        return 1 - (double)(pageFaults - 40) / 400.0;
+
+        if(pageFaults<=40)
+            return 1.0;
+        else
+            return 1 - (double)(pageFaults - 40) / 400.0;
     }
 
     // 先进先出(FIFO)
@@ -73,7 +77,10 @@ public class main_operation {
             }
         }
 
-        return 1 - (double)(pageFaults - 40) / 400.0;
+        if(pageFaults<=40)
+            return 1.0;
+        else
+            return 1 - (double)(pageFaults - 40) / 400.0;
     }
 
     // LRU算法
@@ -101,7 +108,10 @@ public class main_operation {
             }
         }
 
-        return 1 - (double)(pageFaults - 40) / 400.0;
+        if(pageFaults<=40)
+            return 1.0;
+        else
+            return 1 - (double)(pageFaults - 40) / 400.0;
     }
 
 

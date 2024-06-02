@@ -21,15 +21,17 @@ public class display extends JFrame {
     private DefaultCategoryDataset dataset;
     private JTable sequenceTable;
     private JTable hitRateTable;
+    private boolean isClick = false;
 
     public display() {
         setTitle("Page Replacement Algorithms");
-        setSize(1700, 1000);
+        setSize(980, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         dataset = new DefaultCategoryDataset();
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(null);
         mainPanel.setBackground(Color.WHITE);
 
         // 创建按钮
@@ -40,10 +42,36 @@ public class display extends JFrame {
                 newSequence();
             }
         });
+        generateButton.setBounds(20,20,150,30);
         mainPanel.add(generateButton, BorderLayout.NORTH);
 
+
+        // 随机序列表
+        // 创建一个大标题 JLabel
+        JLabel sequenceTitle = new JLabel("随机序列表");
+        sequenceTitle.setFont(new Font("宋体", Font.BOLD, 24));
+        sequenceTitle.setHorizontalAlignment(SwingConstants.CENTER);
+
+        String[] sequenceColumns = {"序列号", "页码"};
+        Object[][] sequenceData = new Object[400][2];
+        sequenceTable = new JTable(sequenceData, sequenceColumns);
+        sequenceTable.getTableHeader().setResizingAllowed(false);
+        sequenceTable.setDefaultRenderer(Object.class, new renderer());
+
+        // 创建一个 JPanel，将标题和表格放置在其中
+        JPanel sequencePanel = new JPanel(new BorderLayout());
+        // 设置随机序列表格大小
+        sequencePanel.setBounds(20,70,200,300);
+        sequencePanel.setBackground(Color.WHITE);
+        sequencePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        sequencePanel.add(sequenceTitle, BorderLayout.NORTH);
+        sequencePanel.add(new JScrollPane(sequenceTable), BorderLayout.CENTER);
+
+        mainPanel.add(sequencePanel);
+
+
         // 创建折线图
-        JFreeChart lineChart = ChartFactory.createLineChart("", "页框数", "命中率", dataset, PlotOrientation.VERTICAL, true, false, false);
+        JFreeChart lineChart = ChartFactory.createLineChart("命中率折线图", "页框数", "命中率", dataset, PlotOrientation.VERTICAL, true, false, false);
         CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
         // 设置横坐标范围
         CategoryAxis domainAxis = plot.getDomainAxis();
@@ -53,43 +81,19 @@ public class display extends JFrame {
         // 设置纵坐标范围
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setRange(0.55, 1.02);
-        // 添加进mainPanel
+        // 添加
         ChartPanel chartPanel = new ChartPanel(lineChart);
-        chartPanel.setBackground(Color.WHITE);
-        // 设置折线图面板大小
-        chartPanel.setPreferredSize(new Dimension(1000, 700));
-        mainPanel.add(chartPanel, BorderLayout.CENTER);
+        chartPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        chartPanel.setBackground(Color.white);
+        chartPanel.setBounds(240,70,700, 300);
+        mainPanel.add(chartPanel);
 
-
-        // 随机序列表
-        // 创建一个大标题 JLabel
-        JLabel sequenceTitle = new JLabel("随机序列表");
-        sequenceTitle.setFont(new Font("宋体", Font.BOLD, 24));
-        sequenceTitle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        sequenceTitle.setHorizontalAlignment(SwingConstants.CENTER);
-
-        String[] sequenceColumns = {"序列号", "页码"};
-        Object[][] sequenceData = new Object[400][2];
-        sequenceTable = new JTable(sequenceData, sequenceColumns);
-        // 设置随机序列表格大小
-        sequenceTable.setPreferredScrollableViewportSize(new Dimension(300, 700));
-        sequenceTable.getTableHeader().setResizingAllowed(false);
-        sequenceTable.setDefaultRenderer(Object.class, new renderer());
-
-        // 创建一个 JPanel，将标题和表格放置在其中
-        JPanel sequencePanel = new JPanel(new BorderLayout());
-        sequencePanel.setBackground(Color.WHITE);
-        sequencePanel.add(sequenceTitle, BorderLayout.NORTH);
-        sequencePanel.add(new JScrollPane(sequenceTable), BorderLayout.CENTER);
-
-        mainPanel.add(sequencePanel, BorderLayout.WEST);
 
 
         // 命中率表
         // 创建一个大标题 JLabel
         JLabel hitTitle = new JLabel("命中率表，点击表格可查看具体演示过程");
         hitTitle.setFont(new Font("宋体", Font.BOLD, 24));
-        hitTitle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         hitTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
         String[] hitRateColumns = {"页框数", "Opt算法", "FIFO算法", "LRU算法"};
@@ -103,27 +107,32 @@ public class display extends JFrame {
                 int col = hitRateTable.columnAtPoint(evt.getPoint());
 
                 // 处理点击事件
-                if (col >= 1) { // 检查列索引是否在后三列内
-                    System.out.println("页框数："+(row+4)+"，算法："+col);
+                if(isClick){
+                    if (col >= 1) { // 检查列索引是否在后三列内
+                        System.out.println("页框数："+(row+4)+"，算法："+col);
+                    }
                 }
             }
         });
-        // 设置命中率表格大小
-        hitRateTable.setPreferredScrollableViewportSize(new Dimension(800, 300));
 
         // 创建一个 JPanel，将标题和表格放置在其中
         JPanel hitPanel = new JPanel(new BorderLayout());
+        // 设置命中率表格大小
+        hitPanel.setBounds(20,390,920, 250);
         hitPanel.setBackground(Color.WHITE);
+        hitPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         hitPanel.add(hitTitle, BorderLayout.NORTH);
         hitPanel.add(new JScrollPane(hitRateTable), BorderLayout.CENTER);
 
         mainPanel.add(hitPanel, BorderLayout.SOUTH);
 
-        add(mainPanel);
+        getContentPane().add(mainPanel);
     }
 
     // 生成新的随机地址序列并重新计算命中率
     private void newSequence() {
+        isClick = true;
+
         // 生成随机地址序列
         int[] pageSequence = main_operation.newPageSequence();
 
